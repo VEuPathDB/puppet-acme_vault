@@ -4,6 +4,7 @@
 class acme_vault::common (
     $user               = $::acme_vault::params::user,
     $group              = $::acme_vault::params::group,
+    $group_members      = $::acme_vault::params::group_members,
     $home_dir           = $::acme_vault::params::home_dir,
     $contact_email      = $::acme_vault::params::contact_email,
     $domains            = $::acme_vault::params::domains,
@@ -38,6 +39,12 @@ class acme_vault::common (
       owner  => $user,
       group  => $group,
       mode   => '0750',
+    }
+
+    group { $group:
+      ensure          => present,
+      members         => $group_members,
+      system          => true,
     }
 
     # vault module isn't too flexible for install only, just copy in binary

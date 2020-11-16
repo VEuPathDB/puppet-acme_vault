@@ -13,6 +13,10 @@
     {
       "name": "puppetlabs-concat",
       "version_requirement": ">= 1.2.4"
+    },
+    {
+      "name": "onyxpoint-gpasswd",
+      "version_requirement": ">= 1.1.1"
     }
   ],
   "operatingsystem_support": [

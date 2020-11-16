@@ -82,7 +82,11 @@ Default value: `acme_vault`
 
 ##### `group`
 
-group that the user belongs to.  For deploy, this should probably be the webserver group
+group that owns the created certificates
+
+##### `group_members`
+
+members of the above group that will have access to created certificates.  In most cases this will be the webserver group, or any other services that require reading the certs.
 
 Default value: `acme_vault`
 
