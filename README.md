@@ -30,9 +30,7 @@ enabled on any machine that requires the requested certificates.
 ### What acme_vault affects
 
 This module will create a new system user that is used to request and deploy
-certificates.  It uses [lexicon](https://github.com/AnalogJ/lexicon) to make
-api requests for dns changes.  We use namecheap, so the required namecheap
-python library is also included.  Both are installed via pip.
+certificates.
 
 This module also assumes a working installation of vault.
 
@@ -139,7 +137,7 @@ Default value: `/secret/letsencrypt/`
 #### acme_vault::request
 
 This class uses acme.sh, and pulls down the git repo for it.  It uses the
-lexicon provider in acme.sh to do the dns updating for the dns-01 challenge.
+namecheap provider in acme.sh to do the dns updating for the dns-01 challenge.
 It configures a cron job to periodically check if a cert needs renewal.
 
 Note: it does not automatically trigger requesting certs, but relies on cron
@@ -222,21 +220,23 @@ path the the acme.sh script itself
 
 Default value: `$acme_repo_path/acme.sh`
 
-#### `lexicon_provider`
+#### `namecheap_sourceip`
 
-provider for lexicon to use for dns-01 challanges.
+sourceip for namecheap requests (it is well known that this is ignored by their api)
 
-REQUIRED
-
-#### `lexicon_username`
-
-username for lexicon dns.
+Default value: `127.0.0.1`
 
 REQUIRED
 
-#### `lexicon_token`
+#### `namecheap_username`
 
-token for lexicon user.
+username for namecheap dns api.
+
+REQUIRED
+
+#### `namecheap_api_key`
+
+token for namecheap api user.
 
 REQUIRED
 

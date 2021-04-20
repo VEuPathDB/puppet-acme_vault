@@ -17,10 +17,9 @@ class acme_vault::request (
     $acme_repo_path     = $::acme_vault::params::acme_repo_path,
     $acme_script        = $::acme_vault::params::acme_script,
 
-    $lexicon_provider   = $::acme_vault::params::lexicon_provider,
-    $lexicon_username   = $::acme_vault::params::lexicon_username,
-    $lexicon_token      = $::acme_vault::params::lexicon_token,
-
+    $namecheap_username = $::acme_vault::params::namecheap_username,
+    $namecheap_api_key  = $::acme_vault::params::namecheap_api_key,
+    $namecheap_sourceip = $::acme_vault::params::namecheap_sourceip,
 
 ) inherits acme_vault::params {
 
@@ -28,16 +27,10 @@ class acme_vault::request (
 
     $request_bashrc_template = @(END)
 export TLDEXTRACT_CACHE=$HOME/.tld_set
-export PROVIDER=<%= @lexicon_provider %>
-export LEXICON_<%= @lexicon_provider.upcase %>_AUTH_USERNAME=<%= @lexicon_username %>
-export LEXICON_<%= @lexicon_provider.upcase %>_AUTH_TOKEN=<%= @lexicon_token %>
+export NAMECHEAP_USERNAME=<%= @namecheap_username %>
+export NAMECHEAP_API_KEY=<%= @namecheap_api_key %>
+export NAMECHEAP_SOURCEIP=<%= @namecheap_sourceip %>
 END
-
-    # install lexicon
-    ensure_packages(['dns-lexicon', 'PyNamecheap'], {
-      ensure   => present,
-      provider => 'pip',
-    })
 
     # variables in bashrc
     concat::fragment { 'request_bashrc':

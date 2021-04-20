@@ -27,10 +27,10 @@ class acme_vault::params {
     $acme_repo_path = "${home_dir}/acme.sh"
     $acme_script    = "${acme_repo_path}/acme.sh"
 
-    # lexicon
-    $lexicon_provider   = undef
-    $lexicon_username   = undef
-    $lexicon_token      = undef
+    # namecheap
+    $namecheap_username = undef
+    $namecheap_api_key  = undef
+    $namecheap_sourceip = 127.0.0.1
 
     # settings for deploy
     $cert_destination_path = '/etc/acme'

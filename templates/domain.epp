@@ -9,7 +9,7 @@
 <% } else { -%>
 --server <%= $prod_url %> \
 <% } -%>
---dns dns_lexicon \
+--dns dns_namecheap \
 --dnssleep 1800 \
 --domain "<%= $domain %>" --challenge-alias <%= "$domain" %> \
 <% $domains.each |$d| {
