@@ -30,7 +30,7 @@ class acme_vault::params {
     # namecheap
     $namecheap_username = undef
     $namecheap_api_key  = undef
-    $namecheap_sourceip = 127.0.0.1
+    $namecheap_sourceip = '127.0.0.1'
 
     # settings for deploy
     $cert_destination_path = '/etc/acme'
