@@ -41,11 +41,21 @@ class acme_vault::common (
       mode   => '0750',
     }
 
-    group { $group:
-      ensure          => present,
-      members         => $group_members,
-      system          => true,
+    # group membership is handled through collected virtual resources.  This
+    # allows other modules/profiles to add members to the group, for services
+    # that require access to the certs
+
+    @group { $group:
+      ensure  => present,
+      system  => true,
+      tag     => 'acme_vault_group',
     }
+
+    # include lines similar to this in your own modules to add members to the
+    # group.  We use this method here to add the group_members paramater, but
+    # it will work the same in any module.
+
+    Group <| tag == 'acme_vault_group' |> { members +> $group_members }
 
     # vault module isn't too flexible for install only, just copy in binary
     # would be nice if this worked!

@@ -3,7 +3,7 @@ class acme_vault::params {
     # settings for acme user
     $user       = 'acme'
     $group      = 'acme'
-    $group_members      = ['apache']
+    $group_members      = []
     $home_dir   = '/home/acme_vault'
     $contact_email = ''
     $domains     = undef
