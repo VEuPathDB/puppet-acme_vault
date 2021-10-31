@@ -62,9 +62,12 @@ class acme_vault::common (
     #class { '::vault::install':
     #  manage_user => false,
     #}
+    #
+    # we have moved to installing vault binary via a dedicated profile, we no
+    # longer what this here.  This can be removed after puppet cleans up.
 
     file { $vault_bin:
-        ensure => present,
+        ensure => absent,
         owner  => 'root',
         group  => 'root',
         mode   => '0555',
