@@ -82,7 +82,7 @@ class acme_vault::common (
 
     # renew vault token
     cron { 'renew vault token':
-      command => ". \$HOME/.bashrc && $vault_bin token-renew > /dev/null",
+      command => ". \$HOME/.bashrc && $vault_bin token renew > /dev/null",
       user    => $user,
       weekday => 1,
       hour    => 10,
