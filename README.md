@@ -126,7 +126,7 @@ REQUIRED
 
 Path to the vault binary.
 
-Default value: `${home_dir}/vault"`
+Default value: `/usr/local/bin/vault"`
 
 #### `vault_prefix`
 

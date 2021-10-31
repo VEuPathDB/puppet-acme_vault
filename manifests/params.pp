@@ -14,7 +14,7 @@ class acme_vault::params {
     # authentication
     $vault_token = undef
     $vault_addr  = undef
-    $vault_bin   = "${home_dir}/vault"
+    $vault_bin   = "/usr/local/bin/vault"
 
     $vault_prefix   = '/secret/letsencrypt/'
 

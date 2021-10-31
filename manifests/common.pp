@@ -57,19 +57,6 @@ class acme_vault::common (
 
     Group <| tag == 'acme_vault_group' |> { members +> $group_members }
 
-    # vault module isn't too flexible for install only, just copy in binary
-    # would be nice if this worked!
-    #class { '::vault::install':
-    #  manage_user => false,
-    #}
-    #
-    # we have moved to installing vault binary via a dedicated profile, we no
-    # longer what this here.  This can be removed after puppet cleans up.
-
-    file { $vault_bin:
-        ensure => absent,
-    }
-
     # variables in bashrc
     concat { "${home_dir}/.bashrc":
       owner => $user,
