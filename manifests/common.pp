@@ -68,10 +68,6 @@ class acme_vault::common (
 
     file { $vault_bin:
         ensure => absent,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0555',
-        source => 'puppet:///modules/acme_vault/vault',
     }
 
     # variables in bashrc
