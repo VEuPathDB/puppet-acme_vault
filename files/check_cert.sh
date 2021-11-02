@@ -46,6 +46,8 @@ EXISTING_FULLCHAIN_PATH="${EXISTING_CERT_DIR}/fullchain.pem"
 # variables
 ONE_WEEK=604800
 TODAY=$(date --iso-8601)
+# use VAULT_BIN if defined, otherwise, assume /usr/local/bin/vault
+: ${VAULT_BIN:="/usr/local/bin/vault"}
 
 
 NEWCERT_VAULT_PATH="/secret/letsencrypt/${DOMAIN}/cert.pem"
@@ -54,10 +56,10 @@ NEWCHAIN_VAULT_PATH="/secret/letsencrypt/${DOMAIN}/chain.pem"
 NEWFULLCHAIN_VAULT_PATH="/secret/letsencrypt/${DOMAIN}/fullchain.pem"
 
 # Get new cert info
-NEWCERT=$(vault read -field=value $NEWCERT_VAULT_PATH) || exit -1
-NEWKEY=$(vault read -field=value $NEWKEY_VAULT_PATH) || exit -1
-NEWCHAIN=$(vault read -field=value $NEWCHAIN_VAULT_PATH) || exit -1
-NEWFULLCHAIN=$(vault read -field=value $NEWFULLCHAIN_VAULT_PATH) || exit -1
+NEWCERT=$($VAULT_BIN kv get -field=value $NEWCERT_VAULT_PATH) || exit -1
+NEWKEY=$($VAULT_BIN kv get -field=value $NEWKEY_VAULT_PATH) || exit -1
+NEWCHAIN=$($VAULT_BIN kv get -field=value $NEWCHAIN_VAULT_PATH) || exit -1
+NEWFULLCHAIN=$($VAULT_BIN kv get -field=value $NEWFULLCHAIN_VAULT_PATH) || exit -1
 NEWCERT_FINGERPRINT=$(get_fingerprint "$NEWCERT")
 NEWCERT_ENDDATE=$(get_enddate "$NEWCERT")
 
@@ -120,6 +122,6 @@ deploy_cert "$NEWCERT" "$NEWKEY" "$NEWCHAIN" "$NEWFULLCHAIN" "$EXISTING_CERT_PAT
 
 
 
-#openssl x509 -in <(vault read -field=value /secret/apidb.org/cert.pem) -noout -checkend 8640000
+#openssl x509 -in <($VAULT_BIN kv get -field=value /secret/apidb.org/cert.pem) -noout -checkend 8640000
 
 
