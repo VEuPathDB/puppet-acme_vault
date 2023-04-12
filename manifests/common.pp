@@ -1,6 +1,23 @@
-# Common configuration for acme_vault
+# acme_vault::common
 #
-
+# This class defines the common configuration for the acme_vault module.
+# It sets up the necessary user, group, home directory, and environment
+# variables for the acme_vault module to interact with Let's Encrypt and
+# HashiCorp Vault for certificate management.
+#
+# @param user The system user for the acme_vault module.
+# @param group The system group for the acme_vault module.
+# @param group_members Additional group members that require access to the certificates.
+# @param home_dir The home directory for the acme_vault user.
+# @param contact_email The email address for Let's Encrypt registration and notifications.
+# @param domains The list of domain names to request certificates for.
+# @param overrides A hash of domain-specific configuration overrides.
+#
+# @param vault_token The authentication token for accessing HashiCorp Vault.
+# @param vault_addr The address of the HashiCorp Vault server.
+# @param vault_bin The path to the Vault binary.
+# @param vault_prefix The prefix for storing certificates in Vault.
+#
 class acme_vault::common (
     $user               = $::acme_vault::params::user,
     $group              = $::acme_vault::params::group,
@@ -46,9 +63,9 @@ class acme_vault::common (
     # that require access to the certs
 
     @group { $group:
-      ensure  => present,
-      system  => true,
-      tag     => 'acme_vault_group',
+      ensure => present,
+      system => true,
+      tag    => 'acme_vault_group',
     }
 
     # include lines similar to this in your own modules to add members to the
@@ -82,7 +99,7 @@ class acme_vault::common (
 
     # renew vault token
     cron { 'renew vault token':
-      command => ". \$HOME/.bashrc && $vault_bin token renew > /dev/null",
+      command => ". \$HOME/.bashrc && ${vault_bin} token renew > /dev/null",
       user    => $user,
       weekday => 1,
       hour    => 10,
@@ -90,4 +107,3 @@ class acme_vault::common (
     }
 
 }
-

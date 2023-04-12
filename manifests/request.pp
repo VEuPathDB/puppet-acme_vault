@@ -1,6 +1,27 @@
-# Configuration for requesting a cert from letsencrypt, and storing it in vault.
+# acme_vault::request
 #
-
+# This class configures the certificate request process from Let's Encrypt,
+# and stores the obtained certificates in HashiCorp Vault.
+#
+# @param user The system user for the acme_vault module.
+# @param group The system group for the acme_vault module.
+# @param home_dir The home directory for the acme_vault user.
+# @param contact_email The contact email address for Let's Encrypt notifications.
+# @param domains The list of domain names for which certificates will be requested and managed.
+# @param overrides A list of challenge-alias overrides. Defaults to the domain itself.
+#
+# @param staging Whether to use the Let's Encrypt staging environment.
+# @param staging_url Let's Encrypt staging environment API URL.
+# @param prod_url Let's Encrypt production environment API URL.
+#
+# @param acme_revision The revision of the acme.sh script to use.
+# @param acme_repo_path The path to the acme.sh repository.
+# @param acme_script The path to the acme.sh script within the repository.
+#
+# @param namecheap_username Namecheap account username for DNS API.
+# @param namecheap_api_key Namecheap API key.
+# @param namecheap_sourceip The source IP address for Namecheap API requests.
+#
 class acme_vault::request (
     $user               = $::acme_vault::common::user,
     $group              = $::acme_vault::common::group,
@@ -26,11 +47,11 @@ class acme_vault::request (
     include acme_vault::common
 
     $request_bashrc_template = @(END)
-export TLDEXTRACT_CACHE=$HOME/.tld_set
-export NAMECHEAP_USERNAME=<%= @namecheap_username %>
-export NAMECHEAP_API_KEY=<%= @namecheap_api_key %>
-export NAMECHEAP_SOURCEIP=<%= @namecheap_sourceip %>
-END
+      export TLDEXTRACT_CACHE=$HOME/.tld_set
+      export NAMECHEAP_USERNAME=<%= @namecheap_username %>
+      export NAMECHEAP_API_KEY=<%= @namecheap_api_key %>
+      export NAMECHEAP_SOURCEIP=<%= @namecheap_sourceip %>
+      | END
 
     # variables in bashrc
     concat::fragment { 'request_bashrc':
@@ -53,14 +74,14 @@ END
       owner  => $user,
       group  => $group,
       mode   => '0700',
-    } ->
-    file { "${home_dir}/.acme.sh/account.conf":
+    }
+    -> file { "${home_dir}/.acme.sh/account.conf":
       ensure => present,
       owner  => $user,
       group  => $group,
       mode   => '0600',
-    } ->
-    file_line { ' add email to acme conf':
+    }
+    -> file_line { ' add email to acme conf':
       path  => "${home_dir}/.acme.sh/account.conf",
       line  => "ACCOUNT_EMAIL='${contact_email}'",
       match => '^ACCOUNT_EMAIL=.*$',
@@ -86,7 +107,7 @@ END
         )
       }
       cron { "${domain}_issue":
-        command => "${home_dir}/${domain}.sh",
+        command => ". \$HOME/.bashrc && ${home_dir}/${domain}.sh",
         user    => $user,
         weekday => 1,
         hour    => 11,

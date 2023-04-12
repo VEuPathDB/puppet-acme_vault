@@ -27,10 +27,10 @@ deploy_cert() {
     EXISTING_FULLCHAIN_PATH=$8
     
     echo "deploying cert to $EXISTING_CERT_PATH"
-    echo "$NEWCERT" > $EXISTING_CERT_PATH
-    echo "$NEWKEY"  > $EXISTING_KEY_PATH
-    echo "$NEWCHAIN"  > $EXISTING_CHAIN_PATH
-    echo "$NEWFULLCHAIN"  > $EXISTING_FULLCHAIN_PATH
+    echo "$NEWCERT" > "$EXISTING_CERT_PATH"
+    echo "$NEWKEY"  > "$EXISTING_KEY_PATH"
+    echo "$NEWCHAIN"  > "$EXISTING_CHAIN_PATH"
+    echo "$NEWFULLCHAIN"  > "$EXISTING_FULLCHAIN_PATH"
 
 }
 
@@ -44,10 +44,9 @@ EXISTING_CHAIN_PATH="${EXISTING_CERT_DIR}/chain.pem"
 EXISTING_FULLCHAIN_PATH="${EXISTING_CERT_DIR}/fullchain.pem"
 
 # variables
-ONE_WEEK=604800
 TODAY=$(date --iso-8601)
 # use VAULT_BIN if defined, otherwise, assume /usr/local/bin/vault
-: ${VAULT_BIN:="/usr/local/bin/vault"}
+: "${VAULT_BIN:=/usr/local/bin/vault}"
 
 
 NEWCERT_VAULT_PATH="/secret/letsencrypt/${DOMAIN}/cert.pem"
@@ -56,10 +55,10 @@ NEWCHAIN_VAULT_PATH="/secret/letsencrypt/${DOMAIN}/chain.pem"
 NEWFULLCHAIN_VAULT_PATH="/secret/letsencrypt/${DOMAIN}/fullchain.pem"
 
 # Get new cert info
-NEWCERT=$($VAULT_BIN kv get -field=value $NEWCERT_VAULT_PATH) || exit -1
-NEWKEY=$($VAULT_BIN kv get -field=value $NEWKEY_VAULT_PATH) || exit -1
-NEWCHAIN=$($VAULT_BIN kv get -field=value $NEWCHAIN_VAULT_PATH) || exit -1
-NEWFULLCHAIN=$($VAULT_BIN kv get -field=value $NEWFULLCHAIN_VAULT_PATH) || exit -1
+NEWCERT=$($VAULT_BIN kv get -field=value "$NEWCERT_VAULT_PATH") || exit 1
+NEWKEY=$($VAULT_BIN kv get -field=value "$NEWKEY_VAULT_PATH") || exit 1
+NEWCHAIN=$($VAULT_BIN kv get -field=value "$NEWCHAIN_VAULT_PATH") || exit 1
+NEWFULLCHAIN=$($VAULT_BIN kv get -field=value "$NEWFULLCHAIN_VAULT_PATH") || exit 1
 NEWCERT_FINGERPRINT=$(get_fingerprint "$NEWCERT")
 NEWCERT_ENDDATE=$(get_enddate "$NEWCERT")
 
@@ -67,7 +66,7 @@ NEWCERT_ENDDATE=$(get_enddate "$NEWCERT")
 if [ "$NEWCERT_FINGERPRINT" == "" ]
 then
     echo "no valid new cert found!"
-    exit -1
+    exit 1
 fi
 
 #echo "new fingerprint: $NEWCERT_FINGERPRINT"
@@ -76,16 +75,16 @@ fi
 # Get existing cert info if it exists.  if it doesn't exist, we don't need to
 # check it, we can just deploy.
 
-if [ -e $EXISTING_CERT_PATH ]
+if [ -e "$EXISTING_CERT_PATH" ]
 then 
-    EXISTING_CERT=$(cat $EXISTING_CERT_PATH)
+    EXISTING_CERT=$(cat "$EXISTING_CERT_PATH")
     EXISTING_CERT_FINGERPRINT=$(get_fingerprint "$EXISTING_CERT")
     EXISTING_CERT_ENDDATE=$(get_enddate "$EXISTING_CERT")
 else
     # create destination dir if needed
-    if [ ! -d $EXISTING_CERT_DIR ]
+    if [ ! -d "$EXISTING_CERT_DIR" ]
     then 
-        mkdir -p $EXISTING_CERT_DIR
+        mkdir -p "$EXISTING_CERT_DIR"
     fi
     deploy_cert "$NEWCERT" "$NEWKEY" "$NEWCHAIN" "$NEWFULLCHAIN" "$EXISTING_CERT_PATH" "$EXISTING_KEY_PATH" "$EXISTING_CHAIN_PATH" "$EXISTING_FULLCHAIN_PATH"
     exit 0
@@ -99,29 +98,23 @@ fi
 # if it is the same, exit normally, this will be the common case
 if [ "$NEWCERT_FINGERPRINT" == "$EXISTING_CERT_FINGERPRINT" ]
 then
-    exit -1
+    exit 1
 fi
 
 # check that new cert is newer than current cert
 if [ "$EXISTING_CERT_ENDDATE" \> "$NEWCERT_ENDDATE" ]
 then
     echo "existing cert expiration is older, exiting"
-    exit -1
+    exit 1
 fi
 
 # check that new cert is not expired
 if [ "$NEWCERT_ENDDATE" \< "$TODAY" ]
 then
     echo "new cert is expired, exiting"
-    exit -1
+    exit 1
 fi
 
 # if we made it this far, the cert looks good, replace it
 
 deploy_cert "$NEWCERT" "$NEWKEY" "$NEWCHAIN" "$NEWFULLCHAIN" "$EXISTING_CERT_PATH" "$EXISTING_KEY_PATH" "$EXISTING_CHAIN_PATH" "$EXISTING_FULLCHAIN_PATH"
-
-
-
-#openssl x509 -in <($VAULT_BIN kv get -field=value /secret/apidb.org/cert.pem) -noout -checkend 8640000
-
-

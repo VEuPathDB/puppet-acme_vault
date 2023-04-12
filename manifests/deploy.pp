@@ -1,6 +1,19 @@
-# Configuration for deploying certs in vault to the filesystem
+# acme_vault::deploy
 #
-
+# This class configures the deployment of certificates from HashiCorp Vault
+# to the filesystem. It sets up the necessary directory structure, scripts,
+# and cron jobs to periodically check for and deploy updated certificates
+# for the specified domains.
+#
+# @param user The system user for the acme_vault module.
+# @param group The system group for the acme_vault module.
+# @param home_dir The home directory for the acme_vault user.
+# @param domains The list of domain names for which certificates will be deployed.
+#
+# @param cert_destination_path The directory where certificates will be deployed on the filesystem.
+# @param deploy_scripts The directory where deployment scripts will be stored.
+# @param restart_method The command to run after certificate deployment (e.g., to restart dependent services).
+#
 class acme_vault::deploy(
     $user                  = $::acme_vault::common::user,
     $group                 = $::acme_vault::common::group,
