@@ -107,7 +107,7 @@ class acme_vault::request (
         )
       }
       cron { "${domain}_issue":
-        command => ". \$HOME/.bashrc && ${home_dir}/${domain}.sh",
+        command => "${home_dir}/${domain}.sh",
         user    => $user,
         weekday => 1,
         hour    => 11,
