@@ -49,9 +49,9 @@ class acme_vault::deploy(
     cron { "${domain}_deploy":
       command => ". \$HOME/.bashrc && ${home_dir}/check_cert.sh ${domain} ${cert_destination_path} && ${restart_method}",
       user    => $user,
-      weekday => ['2-4'],
-      hour    => ['11-16'],
-      minute  => 30,
+      weekday => 0,
+      hour    => 10,
+      minute  => 5,
     }
 
     file {"${cert_destination_path}/${domain}":
