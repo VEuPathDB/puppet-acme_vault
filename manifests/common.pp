@@ -35,8 +35,8 @@ class acme_vault::common (
 ) inherits acme_vault::params {
 
     $common_bashrc_template = @(END)
-    export PATH=$HOME:$PATH
-    export VAULT_CMD=<%= @vault_bin %>
+    export PATH=$HOME:$PATH:/usr/local/bin
+    export VAULT_BIN=<%= @vault_bin %>
     export VAULT_TOKEN=<%= @vault_token %>
     export VAULT_ADDR=<%= @vault_addr %>
     export VAULT_PREFIX=<%= @vault_prefix %>
