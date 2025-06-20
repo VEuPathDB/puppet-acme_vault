@@ -46,19 +46,31 @@ class acme_vault::deploy(
 
   # go through each domain, setup cron, and ensure the destination dir exists
   $domains.each |$domain, $d_list| {
-    cron { "${domain}_deploy":
-      command => ". \$HOME/.bashrc && ${home_dir}/check_cert.sh ${domain} ${cert_destination_path} && ${restart_method}",
-      user    => $user,
-      weekday => ['2-4'],
-      hour    => ['11-16'],
-      minute  => 30,
-    }
-
     file {"${cert_destination_path}/${domain}":
       ensure => directory,
       owner  => $user,
       group  => $group,
       mode   => '0750',
+    }
+
+    $deploy_command = ". ${home_dir}/.bashrc && ${home_dir}/check_cert.sh ${domain} ${cert_destination_path} && ${restart_method}"
+
+    cron { "${domain}_deploy":
+      command => $deploy_command,
+      user    => $user,
+      weekday => ['2-4'],
+      hour    => ['11-16'],
+      minute  => 30,
+      notify  => Exec["init acme_deploy for ${domain}"]
+    }
+
+    # For the initial install, we don't want to wait until the cron job runs. Instead, run it manually unless the certs exist
+    exec{ "init acme_deploy for ${domain}":
+      command  => ['/bin/bash', '-c', $deploy_command],
+      user     => $user,
+      group    => $group,
+      umask    => '022',
+      refreshonly => true,
     }
   }
 
