@@ -25,7 +25,7 @@ class acme_vault::deploy(
     $restart_method        = $::acme_vault::params::restart_method,
 
 ) inherits acme_vault::params {
-  include acme_vault::common
+  require acme_vault::common
 
   # copy down cert check script
   file {"${home_dir}/check_cert.sh":
