@@ -69,5 +69,6 @@ class acme_vault::params {
     # settings for deploy
     $cert_destination_path = '/etc/acme'
     $deploy_scripts        = "${cert_destination_path}/deploy.d"
-    $restart_method        = "for f in ${deploy_scripts}/*.sh; do \"\$f\"; done"
+    $restart_method        = "if [ $(find ${deploy_scripts} -name '*.sh' | wc -l ) -gt 0 ]; then for f in ${deploy_scripts}/*.sh; do \"\$f\"; done fi"
 }
+
