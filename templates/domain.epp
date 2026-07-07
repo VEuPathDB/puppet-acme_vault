@@ -3,6 +3,7 @@
 
 <%= $acme_script %> \
 --issue \
+--log \
 <% if $staging { -%>
 --staging \
 --server <%= $staging_url %> \
