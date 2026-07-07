@@ -38,5 +38,6 @@
  > /dev/null && \
 <%= $acme_script %> \
 --deploy \
+-- log \
 --domain <%= $domain %> \
 --deploy-hook vault_cli
